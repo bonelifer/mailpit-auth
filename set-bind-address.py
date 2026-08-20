@@ -13,8 +13,10 @@ Options:
                         the "compose_file" setting in config.ini, or auto-detected
                         next to this script (compose.yaml, compose.yml,
                         docker-compose.yaml, docker-compose.yml, in that order).
-  -a, --auto: Auto-detect the private IP (the address the OS would use to reach
-                        the outside network) and apply it.
+  -a, --auto: List candidate addresses (the host's auto-detected private IP and
+                        127.0.0.1) and prompt for which one to apply. Non-interactively
+                        (stdin isn't a TTY), applies the auto-detected IP, or 127.0.0.1
+                        if that couldn't be detected.
   -i, --ip <address>: Apply this specific IP address instead of auto-detecting.
   -r, --revert: Revert MP_UI_BIND_ADDR/MP_SMTP_BIND_ADDR/MP_POP3_BIND_ADDR back to
                         0.0.0.0 instead of setting a private IP.
@@ -91,6 +93,35 @@ def get_private_ip():
         return s.getsockname()[0]
     finally:
         s.close()
+
+
+def choose_address(candidates):
+    """
+    Prompt the user to pick one of several candidate addresses. Falls back
+    to the first candidate without prompting when stdin isn't a TTY (e.g.
+    scripted/non-interactive use).
+
+    Args:
+        candidates (list[tuple[str, str]]): (ip, label) pairs, in the order
+            they should be offered; the first is the default.
+
+    Returns:
+        str: The chosen IP address.
+    """
+    if not sys.stdin.isatty():
+        return candidates[0][0]
+
+    print("Available addresses:")
+    for i, (ip, label) in enumerate(candidates, start=1):
+        print(f"  {i}) {ip} ({label})")
+
+    while True:
+        choice = input(f"Choose an address [1]: ").strip()
+        if not choice:
+            return candidates[0][0]
+        if choice.isdigit() and 1 <= int(choice) <= len(candidates):
+            return candidates[int(choice) - 1][0]
+        print(f"Enter a number between 1 and {len(candidates)}.")
 
 
 def update_bind_addresses(compose_path, target_ip, dry_run=False):
@@ -170,11 +201,13 @@ def main():
     elif args.ip:
         target_ip = args.ip
     else:
+        candidates = []
         try:
-            target_ip = get_private_ip()
+            candidates.append((get_private_ip(), "auto-detected"))
         except OSError as exc:
-            print(f"Error: couldn't auto-detect a private IP ({exc}). Pass -i/--ip explicitly instead.")
-            return 1
+            print(f"Note: couldn't auto-detect a private IP ({exc}).")
+        candidates.append(("127.0.0.1", "localhost"))
+        target_ip = choose_address(candidates)
 
     return update_bind_addresses(compose_file, target_ip, dry_run=args.dry_run)
 
