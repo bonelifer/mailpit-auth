@@ -25,7 +25,7 @@ double_confirm_delete = true
 # Path to the docker-compose file to keep in sync with the SMTP
 # allowed-recipients env file: after every add, update, or delete, this file
 # is checked for a "mailpit:" service and an env_file: entry is added if it's
-# missing. Leave unset to auto-detect next to the script (dc.yml,
-# compose.yaml, compose.yml, docker-compose.yaml, docker-compose.yml, in
-# that order). Overridden by -y/--compose-file.
-#compose_file = ./dc.yml
+# missing. Leave unset to auto-detect next to the script (compose.yaml,
+# compose.yml, docker-compose.yaml, docker-compose.yml, in that order).
+# Overridden by -y/--compose-file.
+#compose_file = ./docker-compose.yml

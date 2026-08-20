@@ -23,7 +23,7 @@ Options:
                         of the default double confirmation.
   -y, --compose-file <path>: Path to the docker-compose file to keep in sync with the
                         SMTP allowed-recipients env file. Default: auto-detected next
-                        to this script (dc.yml, compose.yaml, compose.yml,
+                        to this script (compose.yaml, compose.yml,
                         docker-compose.yaml, docker-compose.yml, in that order).
 
 Note: If a <username>:<password> pair omits the password, or -d/-v is given a bare
@@ -70,9 +70,9 @@ CONFIG_SECTION = "mailpit-auth"
 ENCRYPTION_CHOICES = ["auto", "plain", "SSHA", "MD5Crypt", "APR1Crypt", "SHA", "Bcrypt", "Crypt-SHA-256", "Crypt-SHA-512"]
 
 # Checked in this order next to the script when -y/--compose-file and the
-# "compose_file" config setting are both unset: this project's own dc.yml
-# first, then Docker Compose's own standard search order.
-COMPOSE_FILE_CANDIDATES = ["dc.yml", "compose.yaml", "compose.yml", "docker-compose.yaml", "docker-compose.yml"]
+# "compose_file" config setting are both unset: Docker Compose's own
+# standard search order, which also matches this project's own file name.
+COMPOSE_FILE_CANDIDATES = ["compose.yaml", "compose.yml", "docker-compose.yaml", "docker-compose.yml"]
 
 # Strongest to weakest; used by detect_strongest_encryption().
 ENCRYPTION_STRENGTH_ORDER = ["Bcrypt", "Crypt-SHA-512", "Crypt-SHA-256", "APR1Crypt", "MD5Crypt", "SHA", "SSHA", "plain"]
