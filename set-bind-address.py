@@ -171,13 +171,16 @@ def update_bind_addresses(compose_path, target_ip, dry_run=False):
         print(f"  {old.strip()}")
         print(f"    -> {new.strip()}")
 
+    already_correct = matched - len(changed)
+    suffix = f" ({already_correct} already correct, left alone)" if already_correct else ""
+
     if dry_run:
-        print(f"Dry run: {len(changed)} line(s) would change in {compose_path}.")
+        print(f"Dry run: {len(changed)} line(s) would change in {compose_path}{suffix}.")
         return 0
 
     with open(compose_path, 'w') as f:
         f.writelines(lines)
-    print(f"Updated {len(changed)} line(s) in {compose_path}.")
+    print(f"Updated {len(changed)} line(s) in {compose_path}{suffix}.")
     return 0
 
 
