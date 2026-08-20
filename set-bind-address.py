@@ -147,10 +147,12 @@ def update_bind_addresses(compose_path, target_ip, dry_run=False):
         lines = f.readlines()
 
     changed = []
+    matched = 0
     for i, line in enumerate(lines):
         match = BIND_ADDR_RE.match(line.rstrip('\n'))
         if not match:
             continue
+        matched += 1
         prefix, old_ip, port, rest = match.groups()
         if old_ip == target_ip:
             continue
@@ -159,7 +161,10 @@ def update_bind_addresses(compose_path, target_ip, dry_run=False):
         lines[i] = new_line
 
     if not changed:
-        print(f"No MP_*_BIND_ADDR lines to update in {compose_path} (already {target_ip}, or none found).")
+        if matched:
+            print(f"No changes: all {matched} MP_*_BIND_ADDR line(s) in {compose_path} are already set to {target_ip}.")
+        else:
+            print(f"No MP_*_BIND_ADDR lines found in {compose_path}.")
         return 0
 
     for old, new in changed:
