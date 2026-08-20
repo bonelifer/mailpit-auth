@@ -43,7 +43,7 @@ CONFIG_SECTION = "mailpit-auth"
 # config setting is given.
 COMPOSE_FILE_CANDIDATES = ["compose.yaml", "compose.yml", "docker-compose.yaml", "docker-compose.yml"]
 
-BIND_ADDR_RE = re.compile(r'^(\s*MP_(?:UI|SMTP|POP3)_BIND_ADDR:\s*)([0-9]{1,3}(?:\.[0-9]{1,3}){3}):(\d+)(.*)$')
+BIND_ADDR_RE = re.compile(r'^(\s*)(MP_(?:UI|SMTP|POP3)_BIND_ADDR)(:\s*)([0-9]{1,3}(?:\.[0-9]{1,3}){3}):(\d+)(.*)$')
 
 
 def load_config(config_path):
@@ -153,11 +153,11 @@ def update_bind_addresses(compose_path, target_ip, dry_run=False):
         if not match:
             continue
         matched += 1
-        prefix, old_ip, port, rest = match.groups()
+        leading_ws, key, colon_ws, old_ip, port, rest = match.groups()
         if old_ip == target_ip:
             continue
-        new_line = f"{prefix}{target_ip}:{port}{rest}\n"
-        changed.append((line.rstrip('\n'), new_line.rstrip('\n')))
+        new_line = f"{leading_ws}{key}{colon_ws}{target_ip}:{port}{rest}\n"
+        changed.append((key, f"{old_ip}:{port}", f"{target_ip}:{port}"))
         lines[i] = new_line
 
     if not changed:
@@ -167,9 +167,8 @@ def update_bind_addresses(compose_path, target_ip, dry_run=False):
             print(f"No MP_*_BIND_ADDR lines found in {compose_path}.")
         return 0
 
-    for old, new in changed:
-        print(f"  {old.strip()}")
-        print(f"    -> {new.strip()}")
+    for key, old, new in changed:
+        print(f"Changed {key} from {old} to {new}")
 
     already_correct = matched - len(changed)
     suffix = f" ({already_correct} already correct, left alone)" if already_correct else ""
