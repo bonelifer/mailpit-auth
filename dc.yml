@@ -1,0 +1,34 @@
+---
+
+services:
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    security_opt: [no-new-privileges:true]  # Added: block privilege escalation via setuid/setgid or file capabilities
+    network_mode: host     # Added: bind directly to host interfaces (ports: is ignored/omitted in this mode)
+    healthcheck:           # Added: explicit healthcheck (mirrors the image's built-in one, made visible/tunable here)
+      test: ["CMD", "/mailpit", "readyz"]
+      interval: 15s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    volumes:
+      - ./data:/data     # Added volume mapping for mailpit data
+    env_file:
+      - path: ./data/smtp_allowed_recipients.env   # Added by mailpit-auth.py: MP_SMTP_ALLOWED_RECIPIENTS
+        required: false
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_MAX_AGE: 365d                # Added: auto-delete messages older than 365 days
+      MP_DATABASE: /data/mailpit.db
+      MP_UI_BIND_ADDR: 0.0.0.0:8025   # Added: explicit web UI/API bind address:port
+      MP_SMTP_BIND_ADDR: 0.0.0.0:1025 # Added: explicit SMTP bind address:port
+      MP_POP3_BIND_ADDR: 0.0.0.0:1110 # Added: explicit POP3 bind address:port
+      MP_SMTP_AUTH_FILE: /data/passwords.txt # Added environment variable for SMTP authentication file (required so SMTP actually enforces auth, not just accept-any=0)
+      MP_SMTP_AUTH_ACCEPT_ANY: 0
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1 # Allow plaintext SMTP auth without STARTTLS/TLS (closed homelab, no cert configured)
+      MP_UI_AUTH_FILE: /data/passwords.txt   # Added environment variable for UI authentication file
+      MP_POP3_AUTH_FILE: /data/passwords.txt # Added environment variable for POP3 authentication file (plain, no TLS)
+      MP_LABEL: mailpit                      # Added: display label shown in the web UI
+      TZ:  America/Chicago                   # Added timezone environment variable

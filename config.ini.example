@@ -1,0 +1,31 @@
+[mailpit-auth]
+# Output file for the password file. Overridden by -o/--output.
+output = ./data/passwords.txt
+
+# Encryption type for new/updated passwords. One of: auto, plain, SSHA, MD5Crypt,
+# APR1Crypt, SHA, Bcrypt, Crypt-SHA-256, Crypt-SHA-512. "auto" picks the strongest
+# type supported by the tooling on this system. Overridden by -e/--encryption.
+encryption = auto
+
+# Skip interactive y/N confirmations for updates and deletions. Overridden by
+# -f/--force.
+force = false
+
+# Mail domain used to build the SMTP allowed-recipients env file
+# (smtp_allowed_recipients.env, next to the password file) after every add,
+# update, or delete. Overridden by -m/--domain.
+domain = mailpit
+
+# Ask a second, stronger confirmation ("This is permanent and cannot be
+# undone...") before deleting a user, on top of the original [y/N] prompt.
+# Set to false to restore the original single-prompt behavior. Has no effect
+# when -f/--force is used. Overridden by -s/--single-confirm-delete.
+double_confirm_delete = true
+
+# Path to the docker-compose file to keep in sync with the SMTP
+# allowed-recipients env file: after every add, update, or delete, this file
+# is checked for a "mailpit:" service and an env_file: entry is added if it's
+# missing. Leave unset to auto-detect next to the script (dc.yml,
+# compose.yaml, compose.yml, docker-compose.yaml, docker-compose.yml, in
+# that order). Overridden by -y/--compose-file.
+#compose_file = ./dc.yml
