@@ -11,7 +11,7 @@ Usage: ./set-bind-address.py [options]
 Options:
   -y, --compose-file <path>: Path to the docker-compose file to update. Default:
                         the "compose_file" setting in config.ini, or auto-detected
-                        next to this script (dc.yml, compose.yaml, compose.yml,
+                        next to this script (compose.yaml, compose.yml,
                         docker-compose.yaml, docker-compose.yml, in that order).
   -a, --auto: Auto-detect the private IP (the address the OS would use to reach
                         the outside network) and apply it.
@@ -39,7 +39,7 @@ CONFIG_SECTION = "mailpit-auth"
 # Same search order as mailpit-auth.py, so both scripts agree on which
 # compose file to touch when neither -y/--compose-file nor the compose_file
 # config setting is given.
-COMPOSE_FILE_CANDIDATES = ["dc.yml", "compose.yaml", "compose.yml", "docker-compose.yaml", "docker-compose.yml"]
+COMPOSE_FILE_CANDIDATES = ["compose.yaml", "compose.yml", "docker-compose.yaml", "docker-compose.yml"]
 
 BIND_ADDR_RE = re.compile(r'^(\s*MP_(?:UI|SMTP|POP3)_BIND_ADDR:\s*)([0-9]{1,3}(?:\.[0-9]{1,3}){3}):(\d+)(.*)$')
 

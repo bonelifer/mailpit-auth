@@ -74,9 +74,9 @@ regex matching exactly the current users
 (each as `<username>@<domain>`, `-m`/`--domain`, default `mailpit`), and then
 checks a docker-compose file for a `mailpit:` service. Use `-y`/`--compose-file`
 (or the `compose_file` config setting) to point at one explicitly; otherwise
-the script auto-detects it next to the script, checking `dc.yml`,
-`compose.yaml`, `compose.yml`, `docker-compose.yaml`, and `docker-compose.yml`
-in that order. If the `mailpit:` service doesn't already reference the env
+the script auto-detects it next to the script, checking `compose.yaml`,
+`compose.yml`, `docker-compose.yaml`, and `docker-compose.yml` in that
+order. If the `mailpit:` service doesn't already reference the env
 file, an `env_file:` entry is added automatically, creating the env file
 itself first (with a deny-all `^$` default) if it doesn't exist yet either.
 Any existing compose file that predates this feature gets fully wired up on
