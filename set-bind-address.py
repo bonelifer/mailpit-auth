@@ -13,10 +13,10 @@ Options:
                         the "compose_file" setting in config.ini, or auto-detected
                         next to this script (compose.yaml, compose.yml,
                         docker-compose.yaml, docker-compose.yml, in that order).
-  -a, --auto: List candidate addresses (the host's auto-detected private IP and
-                        127.0.0.1) and prompt for which one to apply. Non-interactively
-                        (stdin isn't a TTY), applies the auto-detected IP, or 127.0.0.1
-                        if that couldn't be detected.
+  -a, --auto: List candidate addresses (the host's auto-detected private IP,
+                        127.0.0.1, and 0.0.0.0) and prompt for which one to apply.
+                        Non-interactively (stdin isn't a TTY), applies the
+                        auto-detected IP, or 127.0.0.1 if that couldn't be detected.
   -i, --ip <address>: Apply this specific IP address instead of auto-detecting.
   -r, --revert: Revert MP_UI_BIND_ADDR/MP_SMTP_BIND_ADDR/MP_POP3_BIND_ADDR back to
                         0.0.0.0 instead of setting a private IP.
@@ -207,6 +207,7 @@ def main():
         except OSError as exc:
             print(f"Note: couldn't auto-detect a private IP ({exc}).")
         candidates.append(("127.0.0.1", "localhost"))
+        candidates.append(("0.0.0.0", "all interfaces"))
         target_ip = choose_address(candidates)
 
     return update_bind_addresses(compose_file, target_ip, dry_run=args.dry_run)

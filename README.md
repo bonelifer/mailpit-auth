@@ -99,7 +99,7 @@ comment untouched. It shares `config.ini`'s `compose_file` setting and
 compose-file auto-detection with `mailpit-auth.py`.
 
 ```bash
-# List candidate addresses (auto-detected private IP, 127.0.0.1) and pick one
+# List candidate addresses (auto-detected private IP, 127.0.0.1, 0.0.0.0) and pick one
 ./set-bind-address.py -a
 
 # Use a specific IP instead of picking from the list
