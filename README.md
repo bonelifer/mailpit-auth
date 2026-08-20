@@ -99,13 +99,13 @@ comment untouched. It shares `config.ini`'s `compose_file` setting and
 compose-file auto-detection with `mailpit-auth.py`.
 
 ```bash
-# Point all three at the host's auto-detected private IP
+# List candidate addresses (auto-detected private IP, 127.0.0.1) and pick one
 ./set-bind-address.py -a
 
-# Use a specific IP instead of auto-detecting
+# Use a specific IP instead of picking from the list
 ./set-bind-address.py -i 192.168.1.70
 
-# Preview the auto-detected change without writing
+# Preview a change without writing (still prompts for -a)
 ./set-bind-address.py -a -n
 
 # Revert back to 0.0.0.0
@@ -116,6 +116,10 @@ Run `./set-bind-address.py -h` for the full option list. Running the script
 with none of `-a`/`-i`/`-r` (including with just `-n` on its own) only prints
 help and changes nothing. Already-correct lines are left alone, so running
 it twice in a row with the same target is a no-op the second time.
+
+`-a`/`--auto` prompts interactively when stdin is a TTY; in a script or
+non-interactive shell it skips the prompt and applies the auto-detected
+private IP (falling back to `127.0.0.1` if detection fails).
 
 ## Contributing
 
