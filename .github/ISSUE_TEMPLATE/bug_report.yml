@@ -1,0 +1,48 @@
+name: Bug report
+description: Report a problem with mailpit-auth or set-bind-address.py
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: script
+    attributes:
+      label: Which script?
+      options:
+        - mailpit-auth.py
+        - set-bind-address.py
+        - Both / not sure
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Python version
+      placeholder: "python3 --version"
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command run
+      description: The exact command line invocation, with any secrets redacted.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include full error output/traceback if any.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: config.ini contents (redacted), docker-compose.yml service definition, OS, etc.
